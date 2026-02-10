@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ComputerType {
+  PURCHASED
+  BUILT
+}
+
+enum PartCategory {
+  CPU
+  GPU
+  MOTHERBOARD
+  RAM
+  STORAGE
+  PSU
+  CASE
+}
+
+model Computer {
+  id        Int          @id @default(autoincrement())
+  name         String
+  type         ComputerType
+  notes        String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  parts Part[]
+}
+
+model Part {
+  id               Int          @id @default(autoincrement())
+  category         PartCategory
+  brand            String
+  model            String
+  notes            String?
+  specs            Json?
+  originComputerId Int
+  originComputer   Computer     @relation(fields: [originComputerId], references: [id])
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
